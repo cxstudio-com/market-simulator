@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ 
+<configuration>
+
+	<settings>
+		<setting name="cacheEnabled" value="false" />
+		<!--
+			Be explicit about which columns are mapped to object
+		 	properties.
+		 -->
+		<!-- <setting name="autoMappingBehavior" value="NONE" /> -->
+
+		<!-- Eagerly load all relationships in a result map. -->
+		<setting name="lazyLoadingEnabled" value="false" />
+
+		<!-- Reuse prepared statements. -->
+		<setting name="defaultExecutorType" value="REUSE" />
+	</settings>
+
+	<typeAliases>
+ 		<package name="com.cxstudio.trading.model" />
+ 		<package name="com.cxstudio.trading.model.persistence.mapper" />
+	</typeAliases>
+
+
+</configuration>
