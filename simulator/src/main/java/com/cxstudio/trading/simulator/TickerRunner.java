@@ -2,10 +2,10 @@ package com.cxstudio.trading.simulator;
 
 import com.cxstudio.trading.model.Symbol;
 
-public class TradeRunner implements Runnable {
+public class TickerRunner implements Runnable {
     private final Symbol symbol;
 
-    public TradeRunner(Symbol symbol) {
+    public TickerRunner(Symbol symbol) {
         this.symbol = symbol;
     }
 

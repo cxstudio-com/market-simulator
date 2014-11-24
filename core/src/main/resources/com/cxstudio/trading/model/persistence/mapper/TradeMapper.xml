@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.cxstudio.trading.model.persistence.mapper.TradeMapper">
+
+  <resultMap id="TradeMap" type="com.cxstudio.trading.model.Trade">
+  	<id column="trade_id" property="tradeId" jdbcType="BIGINT" />
+  	<result column="percent_change" property="percentChange" jdbcType="FLOAT" />
+  	<result column="datetime" property="dateTime" jdbcType="TIMESTAMP" /> 
+  </resultMap>
+
+  <select id="selectTrades" resultMap="TradeMap">
+    select * from trade WHERE symbol_id = #{symbol.symbolId}
+    <if test="filter.startTime != null">
+    	AND datetime &gt;= #{filter.startTime}
+    </if>
+    <if test="filter.endTime != null">
+    	AND datetime &lt; #{filter.endTime}
+    </if>
+    <if test="filter.order != null">
+    	ORDER BY datetime ${filter.order}
+    </if>
+    
+    <choose>
+	    <when test="filter.limit > 0">
+	    	Limit #{filter.limit}
+	    </when>
+	    <otherwise>
+	    	Limit 10000
+	    </otherwise>
+    </choose>
+  </select>
+  
+  <insert id="insertTrades">
+  	 INSERT INTO trade (symbol_id,
+						open,
+						close,
+						high,
+						low,
+						percent_change,
+						bid,
+						ask,
+						volume,
+						datetime
+      ) VALUES
+    <foreach collection="trades" item="trade" separator=","> 
+      (           
+         #{trade.symbol.symbolId},
+		 #{trade.open},
+		 #{trade.close},
+		 #{trade.high},
+		 #{trade.low},
+		 #{trade.percentChange},
+		 #{trade.bid},
+		 #{trade.ask},
+		 #{trade.volume},
+		 #{trade.dateTime}
+      )
+    </foreach>
+  </insert>
+  
+  <insert id="insertTempTrades">
+  	 INSERT INTO trade_test (symbol_id,
+						open,
+						close,
+						high,
+						low,
+						percent_change,
+						bid,
+						ask,
+						volume,
+						datetime
+      ) VALUES
+    <foreach collection="trades" item="trade" separator=","> 
+      (           
+         #{trade.symbol.symbolId},
+		 #{trade.open},
+		 #{trade.close},
+		 #{trade.high},
+		 #{trade.low},
+		 #{trade.percentChange},
+		 #{trade.bid},
+		 #{trade.ask},
+		 #{trade.volume},
+		 #{trade.dateTime}
+      )
+    </foreach>
+  </insert>
+</mapper>
