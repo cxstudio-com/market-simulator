@@ -30,8 +30,8 @@ public class DataFilter {
 		return interval;
 	}
 
-	public void setInterval(int interval) {
-		this.interval = interval;
+	public void setInterval(int seconds) {
+		this.interval = seconds;
 	}
 
 	public int getLimit() {

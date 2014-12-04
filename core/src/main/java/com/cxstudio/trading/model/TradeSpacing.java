@@ -9,7 +9,11 @@ public enum TradeSpacing {
         this.spacing = seconds;
     }
 
-    public int getSpacing() {
+    public int getSeconds() {
         return this.spacing;
+    }
+    
+    public long getMilliseconds() {
+    	return this.spacing * 1000l;
     }
 }
