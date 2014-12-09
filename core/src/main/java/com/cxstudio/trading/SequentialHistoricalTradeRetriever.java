@@ -17,7 +17,7 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
     private LinkedList<Trade> tradeBuffer = new LinkedList<Trade>();
     private DataFilter filter;
     private TradeSpacing tradeSpacing;
-    private int currentIndex;
+    private int currentIndex = 0;
 
     public SequentialHistoricalTradeRetriever(TradeDao tradeDao, Symbol symbol, TradeSpacing tradeSpacing, int bufferSize) {
         this.tradeDao = tradeDao;
@@ -30,30 +30,37 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
 
     public Trade retrieve(Date dateTime) {
         if (tradeBuffer.size() <= 0) { // initial fetch
-        	// get n number (n=bufferSize) of trades, centered at given dateTime with n/2 number of trades
-        	// at before and after the giving date.
-            filter.setStartTime(getStartingDate(dateTime, tradeSpacing.getMilliseconds(), bufferSize / 2 * (-1)));
-            tradeBuffer.addAll(tradeDao.getTrades(symbol, filter));
+            // get n number (n=bufferSize) of trades, centered at given dateTime with n/2 number of trades
+            // at before and after the giving date.
+            List<Trade> trades = fetchCache(dateTime);
+            if (trades != null && trades.size() > 0) {
+                tradeBuffer.addAll(trades);
+            } else {
+                return null;
+            }
         }
 
         // the caching policy:
         // advance idx pointer until cached trade matches the given time.
-        // if index > mid point, delete the last item as it advances.
-        // if index meets the end, fetch another n/2 number of trades
-        for (currentIndex = 0; currentIndex < tradeBuffer.size(); currentIndex++) {
+        for (; currentIndex < tradeBuffer.size(); currentIndex++) {
             int compare = compareDate(tradeBuffer.get(currentIndex), dateTime, tradeSpacing);
             if (compare == 0) {
-            	if 
                 return tradeBuffer.get(currentIndex);
-            } else if (compare < 0) {
-                return null; //
-            }
+            } else if (compare > 0) { // if we starts from index=0, we should never reach trade date > given dateTime,
+                                      // re-fetch
+                tradeBuffer.clear();
+                return retrieve(dateTime);
+            } // else compare < 0, trade date < given dateTime, then proceed to next trade
         }
-        return tradeBuffer.poll();
+
+        // if index meets the end, fetch another n number of trades
+        return retrieve(dateTime);
     }
-    
-    private List<Trade> fetchCache(int cacheSize, Date dateTime) {
-    	
+
+    private List<Trade> fetchCache(Date dateTime) {
+        currentIndex = 0;
+        filter.setStartTime(getStartingDate(dateTime, tradeSpacing.getMilliseconds(), bufferSize / 2 * (-1)));
+        return tradeDao.getTrades(symbol, filter);
     }
 
     public List<Trade> lastNumOfTrades(Date startTime, int numOfTrades) {
@@ -61,7 +68,6 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
         return null;
     }
 
-    private position
     private Date getStartingDate(Date time, long tradeSpacing, int stepsAway) {
         return new Date(time.getTime() + tradeSpacing * stepsAway / 2);
     }
