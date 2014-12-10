@@ -46,13 +46,17 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
             int compare = compareDate(tradeBuffer.get(currentIndex), dateTime, tradeSpacing);
             if (compare == 0) {
                 return tradeBuffer.get(currentIndex);
-            } else if (compare > 0) { // if we starts from index=0, we should never reach trade date > given dateTime,
-                                      // re-fetch
-                tradeBuffer.clear();
+            } else if (compare > 0) {
+                if (compareDate(tradeBuffer.get(0), dateTime, tradeSpacing) <= 0) {
+                    // if the first one in buffer is still
+                    currentIndex = 0; // start from begining and iterate it again
+                } else {
+                    // if we starts from index=0, we should never reach trade date > given dateTime, re-fetch
+                    tradeBuffer.clear();
+                }
                 return retrieve(dateTime);
             } // else compare < 0, trade date < given dateTime, then proceed to next trade
         }
-
         // if index meets the end, fetch another n number of trades
         return retrieve(dateTime);
     }
@@ -64,8 +68,14 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
     }
 
     public List<Trade> lastNumOfTrades(Date startTime, int numOfTrades) {
-        // TODO Auto-generated method stub
-        return null;
+        if (numOfTrades > bufferSize / 2) {
+            throw new IllegalArgumentException("Requested last " + numOfTrades + " exceeds half of the cached size " + bufferSize / 2);
+        }
+        if (retrieve(startTime) == null) {
+            return null; // no data for given time
+        } else {
+            return tradeBuffer.subList(currentIndex - numOfTrades > 0 ? currentIndex - numOfTrades : 0, currentIndex);
+        }
     }
 
     private Date getStartingDate(Date time, long tradeSpacing, int stepsAway) {
