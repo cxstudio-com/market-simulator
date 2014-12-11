@@ -2,21 +2,30 @@ package com.cxstudio.trading;
 
 import java.util.List;
 
-import com.cxstudio.trading.model.OpenPosition;
+import com.cxstudio.trading.model.Position;
 import com.cxstudio.trading.model.Trade;
 
 public class TradingContext {
 
-    private Trade cunrrentTrade;
+    private float availableFund;
+    private Trade currentTrade;
     private List<Trade> last30Trades;
-    private List<OpenPosition> openPositions;
+    private List<Position> openPositions;
 
-    public Trade getCunrrentTrade() {
-        return cunrrentTrade;
+    public Trade getCurrentTrade() {
+        return currentTrade;
     }
 
-    public void setCunrrentTrade(Trade cunrrentTrade) {
-        this.cunrrentTrade = cunrrentTrade;
+    public float getAvailableFund() {
+        return availableFund;
+    }
+
+    public void setAvailableFund(float availableFund) {
+        this.availableFund = availableFund;
+    }
+
+    public void setCurrentTrade(Trade cunrrentTrade) {
+        this.currentTrade = cunrrentTrade;
     }
 
     public List<Trade> getLast30Trades() {
@@ -27,11 +36,11 @@ public class TradingContext {
         this.last30Trades = last30Trades;
     }
 
-    public List<OpenPosition> getOpenPositions() {
+    public List<Position> getOpenPositions() {
         return openPositions;
     }
 
-    public void setOpenPositions(List<OpenPosition> openPositions) {
+    public void setOpenPositions(List<Position> openPositions) {
         this.openPositions = openPositions;
     }
 
