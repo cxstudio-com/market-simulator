@@ -2,7 +2,7 @@ package com.cxstudio.trading;
 
 import java.util.List;
 
-import com.cxstudio.trading.model.Position;
+import com.cxstudio.trading.model.Portfolio;
 import com.cxstudio.trading.model.Trade;
 
 public class TradingContext {
@@ -10,7 +10,7 @@ public class TradingContext {
     private float availableFund;
     private Trade currentTrade;
     private List<Trade> last30Trades;
-    private List<Position> openPositions;
+    private Portfolio portfolio;
 
     public Trade getCurrentTrade() {
         return currentTrade;
@@ -36,12 +36,12 @@ public class TradingContext {
         this.last30Trades = last30Trades;
     }
 
-    public List<Position> getOpenPositions() {
-        return openPositions;
+    public Portfolio getPortfolio() {
+        return portfolio;
     }
 
-    public void setOpenPositions(List<Position> openPositions) {
-        this.openPositions = openPositions;
+    public void setPortfolio(Portfolio profile) {
+        this.portfolio = profile;
     }
 
 }

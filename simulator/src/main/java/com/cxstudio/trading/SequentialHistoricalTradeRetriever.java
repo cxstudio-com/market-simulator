@@ -8,10 +8,10 @@ import com.cxstudio.trading.model.DataFilter;
 import com.cxstudio.trading.model.Symbol;
 import com.cxstudio.trading.model.Trade;
 import com.cxstudio.trading.model.TradeSpacing;
-import com.cxstudio.trading.model.persistence.TradeDao;
+import com.cxstudio.trading.persistence.db.TradeDbDao;
 
 public class SequentialHistoricalTradeRetriever implements TradeRetriever {
-    private final TradeDao tradeDao;
+    private final TradeDbDao tradeDao;
     private final Symbol symbol;
     private final int bufferSize = 80;
     private LinkedList<Trade> tradeBuffer = new LinkedList<Trade>();
@@ -19,7 +19,7 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
     private TradeSpacing tradeSpacing;
     private int currentIndex = 0;
 
-    public SequentialHistoricalTradeRetriever(TradeDao tradeDao, Symbol symbol, TradeSpacing tradeSpacing, int bufferSize) {
+    public SequentialHistoricalTradeRetriever(TradeDbDao tradeDao, Symbol symbol, TradeSpacing tradeSpacing, int bufferSize) {
         this.tradeDao = tradeDao;
         this.symbol = symbol;
         this.tradeSpacing = tradeSpacing;

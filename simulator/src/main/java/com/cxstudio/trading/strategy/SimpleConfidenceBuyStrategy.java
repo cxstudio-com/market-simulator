@@ -1,11 +1,14 @@
 package com.cxstudio.trading.strategy;
 
+import org.springframework.stereotype.Component;
+
 import com.cxstudio.trading.TradingContext;
 import com.cxstudio.trading.model.BuyOrder;
 import com.cxstudio.trading.model.Order;
 import com.cxstudio.trading.model.Trade;
 import com.cxstudio.trading.model.TradeEvaluation;
 
+@Component
 public class SimpleConfidenceBuyStrategy implements BuyingStrategy {
     private float confidence = 0.8F;
 

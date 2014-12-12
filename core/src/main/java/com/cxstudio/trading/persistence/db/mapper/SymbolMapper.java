@@ -1,4 +1,4 @@
-package com.cxstudio.trading.model.persistence.mapper;
+package com.cxstudio.trading.persistence.db.mapper;
 
 import java.util.Date;
 import java.util.List;
