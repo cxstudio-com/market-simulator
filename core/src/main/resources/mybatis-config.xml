@@ -22,8 +22,7 @@
 
 	<typeAliases>
  		<package name="com.cxstudio.trading.model" />
- 		<package name="com.cxstudio.trading.model.persistence.mapper" />
+ 		<package name="com.cxstudio.trading.persistence.db.mapper" />
 	</typeAliases>
-
 
 </configuration>

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
 
 import com.cxstudio.trading.PortfolioManager;
 import com.cxstudio.trading.SimulatedExecutor;
@@ -21,6 +23,8 @@ import com.cxstudio.trading.strategy.SimpleConfidenceSellStrategy;
 
 @Configuration
 @ComponentScan("com.cxstudio.trading")
+//@PropertySource("classpath:/database.properties")
+@ImportResource("classpath:/persistent-context.xml")
 public class SimulationConfigure {
     @Autowired
     private SymbolDbDao symbolDao;

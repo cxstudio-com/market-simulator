@@ -52,7 +52,7 @@
 		The mappers will automatically be injected with the SqlSessionTemplate.
 	-->
 	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.cxstudio.trading.model.persistence.mapper" />
+		<property name="basePackage" value="com.cxstudio.trading.persistence.db.mapper" />
 	</bean>
 
 

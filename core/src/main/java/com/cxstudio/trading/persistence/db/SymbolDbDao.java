@@ -14,26 +14,26 @@ import com.cxstudio.trading.persistence.db.mapper.SymbolMapper;
 @Component
 public class SymbolDbDao implements SymbolDao {
     @Autowired
-    SymbolMapper mapper;
+    SymbolMapper symbolMapper;
     static Logger log = LoggerFactory.getLogger(SymbolDbDao.class);
 
     public SymbolDbDao() {
     }
 
     public Symbol getSymbol(String ticker) {
-        return mapper.selectSymbolByTicker(ticker);
+        return symbolMapper.selectSymbolByTicker(ticker);
     }
 
     public Symbol getSymbol(int symbolId) {
-        return mapper.selectSymbolById(symbolId);
+        return symbolMapper.selectSymbolById(symbolId);
     }
 
     public List<Symbol> getAllSymbols(boolean filtered) {
-        return mapper.selectFilteredSymbols();
+        return symbolMapper.selectFilteredSymbols();
     }
 
     public void setUpdateDate(Symbol symbol) {
-        mapper.updateSymbol(symbol);
+    	symbolMapper.updateSymbol(symbol);
     }
 
 }

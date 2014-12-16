@@ -1,5 +1,7 @@
 package com.cxstudio.trading.simulator;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,13 +26,15 @@ public class Simulation {
     private final PortfolioManager portfolioManager;
     private final BuyingStrategy buyingStrategy;
     private final SellingStrategy sellingStrategy;
-    private final Date startTime;
+    private Date startTime;
     private static SimulatedTradeRetrieverFactory retrieverFactory;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SimulationConfigure.class);
         retrieverFactory = (SimulatedTradeRetrieverFactory) ctx.getBean("simulatedTradeRetrieverFactory");
         Simulation simulation = (Simulation) ctx.getBean("simulation");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyy");
+        simulation.setStartTime(dateFormat.parse("01/01/2009"));
         simulation.run();
     }
 
@@ -40,11 +44,14 @@ public class Simulation {
         this.portfolioManager = portfolioManager;
         this.buyingStrategy = buyingStrategy;
         this.sellingStrategy = sellingStrategy;
-        this.startTime = new Date();
     }
+    
 
     private void run() {
-        symbols = symbolDao.getAllSymbols(true);
+        //symbols = symbolDao.getAllSymbols(true);
+    	symbols = new ArrayList<Symbol>();
+    	symbols.add(symbolDao.getSymbol("AAPL"));
+    			
         List<SingleTradeRunner> runners = new ArrayList<SingleTradeRunner>();
         for (Symbol symbol : symbols) {
             SingleTradeRunner runner = new SingleTradeRunner(symbol, evaluators, retrieverFactory, portfolioManager, buyingStrategy, sellingStrategy);
@@ -54,4 +61,14 @@ public class Simulation {
         AcceleratedScheduler scheduler = new AcceleratedScheduler(batchRunner, startTime, 60, 5);
         scheduler.start();
     }
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+    
+    
 }
