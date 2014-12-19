@@ -22,18 +22,16 @@ import com.cxstudio.trading.strategy.SimpleConfidenceBuyStrategy;
 import com.cxstudio.trading.strategy.SimpleConfidenceSellStrategy;
 
 @Configuration
-@ComponentScan("com.cxstudio.trading")
-//@PropertySource("classpath:/database.properties")
-@ImportResource("classpath:/persistent-context.xml")
+@ComponentScan(basePackages = {"com.cxstudio.trading"})
+@ImportResource("classpath:persistent-context.xml")
 public class SimulationConfigure {
-    @Autowired
-    private SymbolDbDao symbolDao;
+    
 
     @Value("${simulator.initialCash:100000}")
     private float initialCash;
 
     @Bean
-    PortfolioManager portfolioManager(SimulatedExecutor executor) {
+    public PortfolioManager portfolioManager(SimulatedExecutor executor) {
         PortfolioManager pm = new PortfolioManager(executor);
         pm.setPortfolio(new Portfolio(initialCash));
         return pm;
@@ -45,7 +43,7 @@ public class SimulationConfigure {
         Set<TradeEvaluator> evaluators = new HashSet<TradeEvaluator>(2);
         evaluators.add(movingAverageEval);
         evaluators.add(supResistEval);
-        return new Simulation(symbolDao, evaluators, portfolioManager, buyingStrategy, sellingStrategy);
+        return new Simulation(evaluators, portfolioManager, buyingStrategy, sellingStrategy);
     }
 
 }

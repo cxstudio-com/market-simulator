@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -16,18 +17,21 @@ import com.cxstudio.trading.SingleTradeRunner;
 import com.cxstudio.trading.TradeEvaluator;
 import com.cxstudio.trading.dao.SymbolDao;
 import com.cxstudio.trading.model.Symbol;
+import com.cxstudio.trading.persistence.db.SymbolDbDao;
 import com.cxstudio.trading.strategy.BuyingStrategy;
 import com.cxstudio.trading.strategy.SellingStrategy;
 
 public class Simulation {
     private List<Symbol> symbols;
-    private final SymbolDao symbolDao;
     private final Set<TradeEvaluator> evaluators;
     private final PortfolioManager portfolioManager;
     private final BuyingStrategy buyingStrategy;
     private final SellingStrategy sellingStrategy;
     private Date startTime;
     private static SimulatedTradeRetrieverFactory retrieverFactory;
+    
+    @Autowired
+    private SymbolDbDao symbolDao;
 
     public static void main(String[] args) throws ParseException {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SimulationConfigure.class);
@@ -38,8 +42,7 @@ public class Simulation {
         simulation.run();
     }
 
-    public Simulation(SymbolDao symbolDao, Set<TradeEvaluator> evaluators, PortfolioManager portfolioManager, BuyingStrategy buyingStrategy, SellingStrategy sellingStrategy) {
-        this.symbolDao = symbolDao;
+    public Simulation(Set<TradeEvaluator> evaluators, PortfolioManager portfolioManager, BuyingStrategy buyingStrategy, SellingStrategy sellingStrategy) {
         this.evaluators = evaluators;
         this.portfolioManager = portfolioManager;
         this.buyingStrategy = buyingStrategy;

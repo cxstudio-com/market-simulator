@@ -1,10 +1,15 @@
 package com.cxstudio.trading;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.cxstudio.trading.model.Order;
 import com.cxstudio.trading.model.Portfolio;
 
+@Component
 public class PortfolioManager {
     private Portfolio portfolio;
+    @Autowired
     private OrderExecutor orderExecutor;
 
     public PortfolioManager(OrderExecutor orderExecutor) {

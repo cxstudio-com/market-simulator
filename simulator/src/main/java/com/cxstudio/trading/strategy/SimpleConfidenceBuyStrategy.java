@@ -1,5 +1,6 @@
 package com.cxstudio.trading.strategy;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.cxstudio.trading.TradingContext;
@@ -10,8 +11,12 @@ import com.cxstudio.trading.model.TradeEvaluation;
 
 @Component
 public class SimpleConfidenceBuyStrategy implements BuyingStrategy {
-    private float confidence = 0.8F;
+    @Value("${simulator.confidenceBuyStrategy:0.8}")
+	private float confidence = 0.8F;
 
+    public SimpleConfidenceBuyStrategy() {
+    }
+    
     public SimpleConfidenceBuyStrategy(float confidence) {
         this.confidence = confidence;
     }
