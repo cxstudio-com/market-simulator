@@ -16,7 +16,9 @@ import com.cxstudio.trading.SimulatedTradeRetrieverFactory;
 import com.cxstudio.trading.SingleTradeRunner;
 import com.cxstudio.trading.TradeEvaluator;
 import com.cxstudio.trading.dao.SymbolDao;
+import com.cxstudio.trading.dao.TradeDao;
 import com.cxstudio.trading.model.Symbol;
+import com.cxstudio.trading.model.TradeSpacing;
 import com.cxstudio.trading.persistence.db.SymbolDbDao;
 import com.cxstudio.trading.strategy.BuyingStrategy;
 import com.cxstudio.trading.strategy.SellingStrategy;
@@ -35,7 +37,8 @@ public class Simulation {
 
     public static void main(String[] args) throws ParseException {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SimulationConfigure.class);
-        retrieverFactory = (SimulatedTradeRetrieverFactory) ctx.getBean("simulatedTradeRetrieverFactory");
+        TradeDao tradeDao = (TradeDao) ctx.getBean("tradeDbDao");
+        retrieverFactory = new SimulatedTradeRetrieverFactory(tradeDao, TradeSpacing.MINUTE, 480);
         Simulation simulation = (Simulation) ctx.getBean("simulation");
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyy");
         simulation.setStartTime(dateFormat.parse("01/01/2009"));

@@ -9,9 +9,9 @@ import com.cxstudio.trading.model.Portfolio;
 @Component
 public class PortfolioManager {
     private Portfolio portfolio;
-    @Autowired
     private OrderExecutor orderExecutor;
-
+    
+    @Autowired
     public PortfolioManager(OrderExecutor orderExecutor) {
         this.orderExecutor = orderExecutor;
     }

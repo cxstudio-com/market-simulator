@@ -31,14 +31,14 @@ public class TradingDbConfig {
         Arrays.asList(ConnectionState.class.getCanonicalName(), StatementFinalizer.class.getCanonicalName())
     );
 
-    @Value("${profile.datasource.driverClassName}") private String driverClassName;
-    @Value("${profile.datasource.url}") private String url;
-    @Value("${profile.datasource.username}")private String username;
-    @Value("${profile.datasource.password}")private String password;
-    @Value("${profile.datasource.pool.initialSize}") private int initialSize;
-    @Value("${profile.datasource.pool.minIdle}") private int minIdle;
-    @Value("${profile.datasource.pool.maxIdle}") private int maxIdle;
-    @Value("${profile.datasource.pool.maxActive}") private int maxActive;
+    @Value("${marketsimulator.datasource.username}") private String driverClassName;
+    @Value("${marketsimulator.datasource.url}") private String url;
+    @Value("${marketsimulator.datasource.username}")private String username;
+    @Value("${marketsimulator.datasource.password}")private String password;
+    @Value("${marketsimulator.datasource.pool.initialSize}") private int initialSize;
+    @Value("${marketsimulator.datasource.pool.minIdle}") private int minIdle;
+    @Value("${marketsimulator.datasource.pool.maxIdle}") private int maxIdle;
+    @Value("${marketsimulator.datasource.pool.maxActive}") private int maxActive;
 
     @Bean(destroyMethod = "close")
     public DataSource dataSource() {
