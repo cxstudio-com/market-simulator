@@ -113,9 +113,10 @@ public class Trade {
 
 	@Override
 	public String toString() {
-		return "Trade [symbol=" + symbol.getTicker() + ", dateTime=" + dateTime + ", open=" + open + ", close=" + close
-				+ ", high=" + high + ", low=" + low + ", volume=" + volume + ", percentChange=" + percentChange
-				+ ", bid=" + bid + ", ask=" + ask + "]";
+		return "Trade [tradeId=" + tradeId + ", symbol=" + symbol
+				+ ", dateTime=" + dateTime + ", close=" + close + "]";
 	}
+
+
 
 }

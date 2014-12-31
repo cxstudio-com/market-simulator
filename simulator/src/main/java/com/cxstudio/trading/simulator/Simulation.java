@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -20,6 +22,7 @@ import com.cxstudio.trading.dao.TradeDao;
 import com.cxstudio.trading.model.Symbol;
 import com.cxstudio.trading.model.TradeSpacing;
 import com.cxstudio.trading.persistence.db.SymbolDbDao;
+import com.cxstudio.trading.persistence.db.TradeDbDao;
 import com.cxstudio.trading.strategy.BuyingStrategy;
 import com.cxstudio.trading.strategy.SellingStrategy;
 
@@ -31,6 +34,7 @@ public class Simulation {
     private final SellingStrategy sellingStrategy;
     private Date startTime;
     private static SimulatedTradeRetrieverFactory retrieverFactory;
+    static Logger log = LoggerFactory.getLogger(Simulation.class);
     
     @Autowired
     private SymbolDbDao symbolDao;
@@ -41,7 +45,7 @@ public class Simulation {
         retrieverFactory = new SimulatedTradeRetrieverFactory(tradeDao, TradeSpacing.MINUTE, 480);
         Simulation simulation = (Simulation) ctx.getBean("simulation");
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyy");
-        simulation.setStartTime(dateFormat.parse("01/01/2009"));
+        simulation.setStartTime(dateFormat.parse("03/01/2009"));
         simulation.run();
     }
 

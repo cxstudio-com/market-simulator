@@ -21,7 +21,7 @@
     <!--  Suppress org.apache -->
     <logger name="com.cxstudio.trading" level="DEBUG" />
 	
-    <root level="DEBUG">
+    <root level="INFO">
 	   <appender-ref ref="STDOUT" />
 	   <appender-ref ref="simulatorLog" />
    </root>

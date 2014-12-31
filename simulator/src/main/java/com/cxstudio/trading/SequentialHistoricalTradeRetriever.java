@@ -4,14 +4,19 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cxstudio.trading.dao.TradeDao;
 import com.cxstudio.trading.model.DataFilter;
 import com.cxstudio.trading.model.Symbol;
 import com.cxstudio.trading.model.Trade;
 import com.cxstudio.trading.model.TradeSpacing;
 import com.cxstudio.trading.persistence.db.TradeDbDao;
+import com.cxstudio.trading.simulator.Simulation;
 
 public class SequentialHistoricalTradeRetriever implements TradeRetriever {
+    static Logger log = LoggerFactory.getLogger(SequentialHistoricalTradeRetriever.class);
     private final TradeDao tradeDao;
     private final Symbol symbol;
     private final int bufferSize = 80;
@@ -31,10 +36,13 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
 
     public Trade retrieve(Date dateTime) {
         if (tradeBuffer.size() <= 0) { // initial fetch
+        	log.debug("Buffer size 0. Fetch from source.");
             // get n number (n=bufferSize) of trades, centered at given dateTime with n/2 number of trades
             // at before and after the giving date.
             List<Trade> trades = fetchCache(dateTime);
+            log.debug("{} trades fetched from source.", (trades==null? "null": trades.size()));
             if (trades != null && trades.size() > 0) {
+            	log.debug("First one from the fetched data {}", trades.get(0));
                 tradeBuffer.addAll(trades);
             } else {
                 return null;
@@ -49,15 +57,32 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
                 return tradeBuffer.get(currentIndex);
             } else if (compare > 0) {
                 if (compareDate(tradeBuffer.get(0), dateTime, tradeSpacing) <= 0) {
-                    // if the first one in buffer is still
-                    currentIndex = 0; // start from begining and iterate it again
+                    // if the first one in buffer is earlier than the given date
+                	// start from begining and iterate it again
+                	log.debug("The first one in the buffer {} <= given time {}. Iterate from first again",
+                			tradeBuffer.get(0), dateTime);
+                    currentIndex = 0; 
                 } else {
                     // if we starts from index=0, we should never reach trade date > given dateTime, re-fetch
-                    tradeBuffer.clear();
+                	log.debug("The first one in the buffer {} > given time {}. Clear cache and refetch.",
+                			tradeBuffer.get(0), dateTime);
+                	tradeBuffer.clear();
                 }
+                try {
+        			Thread.sleep(10000);
+        		} catch (InterruptedException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
                 return retrieve(dateTime);
             } // else compare < 0, trade date < given dateTime, then proceed to next trade
         }
+        try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         // if index meets the end, fetch another n number of trades
         return retrieve(dateTime);
     }
