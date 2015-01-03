@@ -25,7 +25,7 @@ public class Portfolio {
     public void setOpenPositions(List<OpenPosition> openPositions) {
         this.openPositions = openPositions;
     }
-
+    
     public List<ClosedPosition> getClosedPositions() {
         return closedPositions;
     }
