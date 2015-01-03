@@ -25,6 +25,10 @@ public class TradeDbDao implements TradeDao {
     public List<Trade> getTrades(Symbol symbol, DataFilter filter) {
         return mapper.selectTrades(symbol, filter);
     }
+    
+    public List<Trade> getMiddleBufferedTrades(Symbol symbol, DataFilter filter) {
+        return mapper.selectMiddleBufferedTrades(symbol, filter);
+    }
 
     public void insertTrades(List<Trade> trades) {
         if (trades != null && trades.size() > 0)

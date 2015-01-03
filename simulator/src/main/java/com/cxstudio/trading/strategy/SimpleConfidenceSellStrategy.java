@@ -2,6 +2,8 @@ package com.cxstudio.trading.strategy;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +13,12 @@ import com.cxstudio.trading.model.Order;
 import com.cxstudio.trading.model.SellOrder;
 import com.cxstudio.trading.model.Trade;
 import com.cxstudio.trading.model.TradeEvaluation;
+import com.cxstudio.trading.simulator.AcceleratedScheduler;
 
 @Component
 public class SimpleConfidenceSellStrategy implements SellingStrategy {
+
+    static Logger log = LoggerFactory.getLogger(SimpleConfidenceSellStrategy.class);
 	@Value("${simulator.confidenceBuyStrategy:0.8}")
     private float confidence = 0.8F;
 

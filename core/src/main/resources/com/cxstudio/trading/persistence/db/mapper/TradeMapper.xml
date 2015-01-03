@@ -33,6 +33,19 @@
     </choose>
   </select>
   
+  <select id="selectMiddleBufferedTrades" resultMap="TradeMap">
+  	(SELECT * FROM trade WHERE symbol_id = #{symbol.symbolId}
+  	  	AND datetime &lt; #{filter.startTime}
+    	ORDER BY datetime DESC
+    	Limit #{filter.limit})
+    UNION 
+  	(SELECT * FROM trade WHERE symbol_id = #{symbol.symbolId}
+  	  	AND datetime &gt;= #{filter.startTime}
+    	ORDER BY datetime ASC
+    	Limit #{filter.limit})
+    ORDER BY datetime ASC  
+  </select>
+  
   <insert id="insertTrades">
   	 INSERT INTO trade (symbol_id,
 						open,

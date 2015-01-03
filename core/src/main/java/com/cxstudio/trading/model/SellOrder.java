@@ -34,7 +34,7 @@ public class SellOrder implements Order {
         return orderType;
     }
 
-    public float getHighPrice() {
+	public float getHighPrice() {
         return highPrice;
     }
 
@@ -42,4 +42,10 @@ public class SellOrder implements Order {
         return lowPrice;
     }
 
+    @Override
+	public String toString() {
+		return "SellOrder [symbol=" + symbol + ", numOfShares=" + numOfShares
+				+ ", orderType=" + orderType + ", highPrice=" + highPrice
+				+ ", lowPrice=" + lowPrice + "]";
+	}
 }

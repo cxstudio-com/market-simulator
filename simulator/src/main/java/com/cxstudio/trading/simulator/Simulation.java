@@ -38,6 +38,9 @@ public class Simulation {
     
     @Autowired
     private SymbolDbDao symbolDao;
+    
+    @Autowired
+    private TradeDbDao tradeDao;
 
     public static void main(String[] args) throws ParseException {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SimulationConfigure.class);
@@ -45,7 +48,7 @@ public class Simulation {
         retrieverFactory = new SimulatedTradeRetrieverFactory(tradeDao, TradeSpacing.MINUTE, 480);
         Simulation simulation = (Simulation) ctx.getBean("simulation");
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyy");
-        simulation.setStartTime(dateFormat.parse("03/01/2009"));
+        simulation.setStartTime(dateFormat.parse("03/02/2009"));
         simulation.run();
     }
 
@@ -68,7 +71,7 @@ public class Simulation {
             runners.add(runner);
         }
         BatchTradeRunner batchRunner = new BatchTradeRunner(runners);
-        AcceleratedScheduler scheduler = new AcceleratedScheduler(batchRunner, startTime, 60, 5);
+        AcceleratedScheduler scheduler = new AcceleratedScheduler(batchRunner, startTime, 60, 5, tradeDao);
         scheduler.start();
     }
 

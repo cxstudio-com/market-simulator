@@ -43,4 +43,11 @@ public class BuyOrder implements Order {
         return lowPrice;
     }
 
+	@Override
+	public String toString() {
+		return "BuyOrder [symbol=" + symbol + ", numOfShares=" + numOfShares
+				+ ", orderType=" + orderType + ", highPrice=" + highPrice
+				+ ", lowPrice=" + lowPrice + "]";
+	}
+
 }

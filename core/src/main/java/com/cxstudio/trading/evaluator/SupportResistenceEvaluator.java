@@ -11,7 +11,7 @@ public class SupportResistenceEvaluator implements TradeEvaluator {
 
     public TradeEvaluation evaluate(TradingContext context) {
         // TODO Auto-generated method stub
-        return null;
+        return new TradeEvaluation(1, 0);
     }
 
 }

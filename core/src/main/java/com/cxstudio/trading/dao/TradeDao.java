@@ -7,9 +7,11 @@ import com.cxstudio.trading.model.Symbol;
 import com.cxstudio.trading.model.Trade;
 
 public interface TradeDao {
-    public List<Trade> getTrades(Symbol symbol, DataFilter filter);
+    List<Trade> getTrades(Symbol symbol, DataFilter filter);
+    
+    List<Trade> getMiddleBufferedTrades(Symbol symbol, DataFilter filter);
 
-    public void insertTrades(List<Trade> trades);
+    void insertTrades(List<Trade> trades);
 
-    public void insertTempTrades(List<Trade> trades);
+    void insertTempTrades(List<Trade> trades);
 }

@@ -3,6 +3,8 @@ package com.cxstudio.trading.simulator;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,8 +27,8 @@ import com.cxstudio.trading.strategy.SimpleConfidenceSellStrategy;
 @ComponentScan(basePackages = {"com.cxstudio.trading"})
 @ImportResource("classpath:persistent-context.xml")
 public class SimulationConfigure {
+    static Logger log = LoggerFactory.getLogger(SimulationConfigure.class);
     
-
     @Value("${simulator.initialCash:100000}")
     private float initialCash;
 
@@ -43,6 +45,7 @@ public class SimulationConfigure {
         Set<TradeEvaluator> evaluators = new HashSet<TradeEvaluator>(2);
         evaluators.add(movingAverageEval);
         evaluators.add(supResistEval);
+        log.debug("portfolioManager.getProtfolio {}", portfolioManager.getPortfolio());
         return new Simulation(evaluators, portfolioManager, buyingStrategy, sellingStrategy);
     }
 

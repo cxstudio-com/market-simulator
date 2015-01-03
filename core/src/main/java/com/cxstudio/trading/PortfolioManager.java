@@ -6,12 +6,10 @@ import org.springframework.stereotype.Component;
 import com.cxstudio.trading.model.Order;
 import com.cxstudio.trading.model.Portfolio;
 
-@Component
 public class PortfolioManager {
     private Portfolio portfolio;
     private OrderExecutor orderExecutor;
     
-    @Autowired
     public PortfolioManager(OrderExecutor orderExecutor) {
         this.orderExecutor = orderExecutor;
     }
