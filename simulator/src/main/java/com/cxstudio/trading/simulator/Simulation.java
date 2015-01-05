@@ -17,7 +17,6 @@ import com.cxstudio.trading.PortfolioManager;
 import com.cxstudio.trading.SimulatedTradeRetrieverFactory;
 import com.cxstudio.trading.SingleTradeRunner;
 import com.cxstudio.trading.TradeEvaluator;
-import com.cxstudio.trading.dao.SymbolDao;
 import com.cxstudio.trading.dao.TradeDao;
 import com.cxstudio.trading.model.Symbol;
 import com.cxstudio.trading.model.TradeSpacing;
@@ -35,10 +34,10 @@ public class Simulation {
     private Date startTime;
     private static SimulatedTradeRetrieverFactory retrieverFactory;
     static Logger log = LoggerFactory.getLogger(Simulation.class);
-    
+
     @Autowired
     private SymbolDbDao symbolDao;
-    
+
     @Autowired
     private TradeDbDao tradeDao;
 
@@ -58,30 +57,28 @@ public class Simulation {
         this.buyingStrategy = buyingStrategy;
         this.sellingStrategy = sellingStrategy;
     }
-    
 
     private void run() {
-        //symbols = symbolDao.getAllSymbols(true);
-    	symbols = new ArrayList<Symbol>();
-    	symbols.add(symbolDao.getSymbol("AAPL"));
-    			
+        // symbols = symbolDao.getAllSymbols(true);
+        symbols = new ArrayList<Symbol>();
+        symbols.add(symbolDao.getSymbol("AAPL"));
+
         List<SingleTradeRunner> runners = new ArrayList<SingleTradeRunner>();
         for (Symbol symbol : symbols) {
             SingleTradeRunner runner = new SingleTradeRunner(symbol, evaluators, retrieverFactory, portfolioManager, buyingStrategy, sellingStrategy);
             runners.add(runner);
         }
         BatchTradeRunner batchRunner = new BatchTradeRunner(runners);
-        AcceleratedScheduler scheduler = new AcceleratedScheduler(batchRunner, startTime, 60, 5, tradeDao);
+        AcceleratedScheduler scheduler = new AcceleratedScheduler(batchRunner, startTime, 60, 1, tradeDao);
         scheduler.start();
     }
 
-	public Date getStartTime() {
-		return startTime;
-	}
+    public Date getStartTime() {
+        return startTime;
+    }
 
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
-    
-    
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
 }

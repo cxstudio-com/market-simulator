@@ -11,5 +11,7 @@ public interface Position {
     public float getEntryPrice();
 
     public int getNumOfShares();
+    
+    public float getFee();
 
 }

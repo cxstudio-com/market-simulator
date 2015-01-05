@@ -28,7 +28,7 @@ public class SimpleConfidenceBuyStrategy implements BuyingStrategy {
     public BuyOrder shouldBuy(TradeEvaluation evaluation, TradingContext context) {
         if (evaluation.getBuyScore() > confidence) {
             Trade trade = context.getCurrentTrade();
-            BuyOrder order = new BuyOrder(trade.getSymbol(), (int) (10000 / trade.getClose()), Order.OrderType.MARKET);
+            BuyOrder order = new BuyOrder(trade.getSymbol(), (int) (10000 / trade.getClose()), Order.OrderType.MARKET, trade.getClose(), trade.getClose());
             return order;
         } else {
             return null;

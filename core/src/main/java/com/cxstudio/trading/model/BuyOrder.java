@@ -8,14 +8,12 @@ public class BuyOrder implements Order {
     private float lowPrice;
 
     public BuyOrder(Symbol symbol, int numOfShares, OrderType orderType) {
-        super();
         this.symbol = symbol;
         this.numOfShares = numOfShares;
         this.orderType = orderType;
     }
 
     public BuyOrder(Symbol symbol, int numOfShares, OrderType orderType, float highPrice, float lowPrice) {
-        super();
         this.symbol = symbol;
         this.numOfShares = numOfShares;
         this.orderType = orderType;
@@ -43,11 +41,9 @@ public class BuyOrder implements Order {
         return lowPrice;
     }
 
-	@Override
-	public String toString() {
-		return "BuyOrder [symbol=" + symbol + ", numOfShares=" + numOfShares
-				+ ", orderType=" + orderType + ", highPrice=" + highPrice
-				+ ", lowPrice=" + lowPrice + "]";
-	}
+    @Override
+    public String toString() {
+        return "BuyOrder [symbol=" + symbol + ", numOfShares=" + numOfShares + ", orderType=" + orderType + ", highPrice=" + highPrice + ", lowPrice=" + lowPrice + "]";
+    }
 
 }

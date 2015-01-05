@@ -1,6 +1,6 @@
 package com.cxstudio.trading.strategy;
 
-import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import com.cxstudio.trading.model.Order;
 import com.cxstudio.trading.model.SellOrder;
 import com.cxstudio.trading.model.Trade;
 import com.cxstudio.trading.model.TradeEvaluation;
-import com.cxstudio.trading.simulator.AcceleratedScheduler;
 
 @Component
 public class SimpleConfidenceSellStrategy implements SellingStrategy {
@@ -34,13 +33,13 @@ public class SimpleConfidenceSellStrategy implements SellingStrategy {
      * If sell score is high, sell all shares in open position
      */
     public SellOrder shouldSell(TradeEvaluation evaluation, TradingContext context) {
-        List<OpenPosition> positions = context.getPortfolio().getOpenPositions();
+        Set<OpenPosition> positions = context.getPortfolio().getOpenPositions();
         if (evaluation.getSellScore() > confidence) {
             Trade trade = context.getCurrentTrade();
 
             for (OpenPosition position : positions) {
                 if (position.getSymbol().equals(trade.getSymbol())) {
-                    return new SellOrder(trade.getSymbol(), position.getNumOfShares(), Order.OrderType.MARKET);
+                    return new SellOrder(trade.getSymbol(), position.getNumOfShares(), Order.OrderType.MARKET, trade.getClose(), trade.getClose());
                 }
             }
         }

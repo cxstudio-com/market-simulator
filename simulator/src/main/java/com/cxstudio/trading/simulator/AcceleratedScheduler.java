@@ -22,7 +22,7 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
     private final static int TRADE_DAY_START_MIN = 30;
     private final static int TRADE_DAY_END_HOUR = 15;
     private final static int TRADE_DAY_END_MIN = 59;
-    
+
     /**
      * 
      * @param period the time period that will pull data for
@@ -30,8 +30,7 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
      *            Ex: period = 1 minute, accelerateRate = 60, then scheduler will run every 1 second and run task
      *            on every minute data
      */
-    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSeconds,
-    		float accelerationRate, TradeDao tradeDao) {
+    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSeconds, float accelerationRate, TradeDao tradeDao) {
         this.startTime = startTime;
         this.period = periodInSeconds;
         this.actualPeriodInSeconds = (long) (period / accelerationRate);
@@ -39,8 +38,7 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
         this.tradeDao = tradeDao;
     }
 
-    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSeconds, 
-    		long actualPeriodInSeconds, TradeDao tradeDao) {
+    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSeconds, long actualPeriodInSeconds, TradeDao tradeDao) {
         this.startTime = startTime;
         this.period = periodInSeconds;
         this.actualPeriodInSeconds = actualPeriodInSeconds;
@@ -77,32 +75,35 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
             this.runningTime = startTime.getTime();
         }
 
+        /**
+         * TODO:
+         * Running time needs to be validated against valid trading day/hour, and skip off hours weekend and holidays
+         */
         @Override
         public void run() {
             runningTime += periodInSeconds * 1000;
-        	Date timeToRun = new Date(runningTime); 
-        	Calendar tradeStart = Calendar.getInstance();
-        	tradeStart.setTimeInMillis(runningTime);
-        	tradeStart.set(Calendar.HOUR_OF_DAY, TRADE_DAY_START_HOUR);
-        	tradeStart.set(Calendar.MINUTE, TRADE_DAY_START_MIN);
-        	tradeStart.set(Calendar.SECOND, 0);
-        	Calendar tradeEnd = Calendar.getInstance();
-        	tradeEnd.setTimeInMillis(runningTime);
-        	tradeEnd.set(Calendar.HOUR_OF_DAY, TRADE_DAY_END_HOUR);
-        	tradeEnd.set(Calendar.MINUTE, TRADE_DAY_END_MIN);
-        	tradeEnd.set(Calendar.SECOND, 0);
-        	
-        	// fix start time that is not during trading hours
-        	if (tradeStart.getTime().after(timeToRun) ||
-        		tradeEnd.getTime().before(timeToRun)) {
-        		if (tradeEnd.getTime().before(timeToRun)) {
-        			tradeStart.add(Calendar.DATE, 1);
-        		}
-        		timeToRun = tradeStart.getTime();
-        		runningTime = timeToRun.getTime();
-        	}        	
-        	
-            log.info("Running batch task on {}", timeToRun);
+            Date timeToRun = new Date(runningTime);
+            Calendar tradeStart = Calendar.getInstance();
+            tradeStart.setTimeInMillis(runningTime);
+            tradeStart.set(Calendar.HOUR_OF_DAY, TRADE_DAY_START_HOUR);
+            tradeStart.set(Calendar.MINUTE, TRADE_DAY_START_MIN);
+            tradeStart.set(Calendar.SECOND, 0);
+            Calendar tradeEnd = Calendar.getInstance();
+            tradeEnd.setTimeInMillis(runningTime);
+            tradeEnd.set(Calendar.HOUR_OF_DAY, TRADE_DAY_END_HOUR);
+            tradeEnd.set(Calendar.MINUTE, TRADE_DAY_END_MIN);
+            tradeEnd.set(Calendar.SECOND, 0);
+
+            // fix start time that is not during trading hours
+            if (tradeStart.getTime().after(timeToRun) || tradeEnd.getTime().before(timeToRun)) {
+                if (tradeEnd.getTime().before(timeToRun)) {
+                    tradeStart.add(Calendar.DATE, 1);
+                }
+                timeToRun = tradeStart.getTime();
+                runningTime = timeToRun.getTime();
+            }
+
+            log.debug("Running batch task on {}", timeToRun);
             runner.run(timeToRun);
         }
 

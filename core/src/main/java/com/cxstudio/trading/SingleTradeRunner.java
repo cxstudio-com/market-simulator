@@ -52,18 +52,19 @@ public class SingleTradeRunner implements TradeRunner {
 
         BuyOrder buyOrder = buyingStrategy.shouldBuy(finalEvaluation, context);
         if (buyOrder != null) {
-        	log.info("Buy order created: {}", buyOrder);
+            log.info("Buy order created: {}", buyOrder);
             portfolioManager.executeOrder(buyOrder);
         } else {
-        	log.debug("No buy order created on evaluation {}", finalEvaluation);
+            log.debug("No buy order created on evaluation {}", finalEvaluation);
         }
         SellOrder sellOrder = sellingStrategy.shouldSell(finalEvaluation, context);
         if (sellOrder != null) {
-        	log.info("Sell order created: {}", buyOrder);
+            log.info("Sell order created: {}", sellOrder);
             portfolioManager.executeOrder(sellOrder);
         } else {
-        	log.debug("No sell order created on evaluation {}", finalEvaluation);
+            log.debug("No sell order created on evaluation {}", finalEvaluation);
         }
+        log.info("Single run completed. Portfolio: {}", portfolioManager.getPortfolio());
 
     }
 }
