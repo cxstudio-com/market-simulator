@@ -35,6 +35,9 @@ public class SingleTradeRunner implements TradeRunner {
 
     public void run(Date time) {
         Trade trade = tradeRetreiver.retrieve(time);
+        if (trade == null) {
+            return; // if no trades found for given time, nothing to do
+        }
         TradingContext context = new TradingContext();
         context.setPortfolio(portfolioManager.getPortfolio());
         context.setCurrentTrade(trade);

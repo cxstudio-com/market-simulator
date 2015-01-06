@@ -103,6 +103,7 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
                 runningTime = timeToRun.getTime();
             }
 
+            System.out.println(">>>>>>>>>>>>> AcceleratedScheduler " + timeToRun);
             log.debug("Running batch task on {}", timeToRun);
             runner.run(timeToRun);
         }

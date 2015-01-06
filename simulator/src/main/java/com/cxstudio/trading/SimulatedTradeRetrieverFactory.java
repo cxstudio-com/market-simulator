@@ -1,26 +1,31 @@
 package com.cxstudio.trading;
 
-import org.springframework.stereotype.Component;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.cxstudio.trading.dao.TradeDao;
 import com.cxstudio.trading.model.Symbol;
 import com.cxstudio.trading.model.TradeSpacing;
-import com.cxstudio.trading.persistence.db.TradeDbDao;
 
 public class SimulatedTradeRetrieverFactory implements TradeRetrieverFactory {
 
     private TradeDao tradeDao;
     private TradeSpacing tradeSpacing;
     private int bufferSize;
+    private Map<Symbol, TradeRetriever> tradeRetrieverMap;
 
     public SimulatedTradeRetrieverFactory(TradeDao tradeDao, TradeSpacing tradeSpacing, int bufferSize) {
         super();
         this.tradeDao = tradeDao;
         this.tradeSpacing = tradeSpacing;
         this.bufferSize = bufferSize;
+        this.tradeRetrieverMap = new HashMap<Symbol, TradeRetriever>();
     }
 
     public TradeRetriever getTradeRetriever(Symbol symbol) {
-        return new SequentialHistoricalTradeRetriever(tradeDao, symbol, tradeSpacing, bufferSize);
+        if (!tradeRetrieverMap.containsKey(symbol)) {
+            tradeRetrieverMap.put(symbol, new SequentialHistoricalTradeRetriever(tradeDao, symbol, tradeSpacing, bufferSize));
+        }
+        return tradeRetrieverMap.get(symbol);
     }
 }
