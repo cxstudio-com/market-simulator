@@ -9,12 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cxstudio.trading.Scheduler;
+import com.cxstudio.trading.TradingDates;
 import com.cxstudio.trading.dao.TradeDao;
 
 public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
     static Logger log = LoggerFactory.getLogger(AcceleratedScheduler.class);
-    private final long period;
-    private final long actualPeriodInSeconds;
+    private final long periodInSecond;
+    private final long actualPeriodInMillis;
     private final BatchTradeRunner tradeRunner;
     private final Date startTime;
     private final TradeDao tradeDao;
@@ -30,38 +31,38 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
      *            Ex: period = 1 minute, accelerateRate = 60, then scheduler will run every 1 second and run task
      *            on every minute data
      */
-    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSeconds, float accelerationRate, TradeDao tradeDao) {
+    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSecond, float accelerationRate, TradeDao tradeDao) {
         this.startTime = startTime;
-        this.period = periodInSeconds;
-        this.actualPeriodInSeconds = (long) (period / accelerationRate);
+        this.periodInSecond = periodInSecond;
+        this.actualPeriodInMillis = (long) (periodInSecond * 1000 * accelerationRate);
         this.tradeRunner = tradeRunner;
         this.tradeDao = tradeDao;
     }
 
-    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSeconds, long actualPeriodInSeconds, TradeDao tradeDao) {
+    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSecond, long actualPeriodInMillis, TradeDao tradeDao) {
         this.startTime = startTime;
-        this.period = periodInSeconds;
-        this.actualPeriodInSeconds = actualPeriodInSeconds;
+        this.periodInSecond = periodInSecond;
+        this.actualPeriodInMillis = actualPeriodInMillis;
         this.tradeRunner = tradeRunner;
         this.tradeDao = tradeDao;
     }
 
     public void start() {
-        RunnerTask task = new RunnerTask(tradeRunner, startTime, period);
+        RunnerTask task = new RunnerTask(tradeRunner, startTime, periodInSecond);
         Timer timer = new Timer();
-        timer.schedule(task, 0, actualPeriodInSeconds * 1000);
+        timer.schedule(task, 0, actualPeriodInMillis);
     }
 
     public void stop() {
         // TODO Auto-generated method stub
     }
 
-    public long getPeriod() {
-        return period;
+    public long getPeriodInSecond() {
+        return periodInSecond;
     }
 
     public long getAcceleratedPeriod() {
-        return actualPeriodInSeconds;
+        return actualPeriodInMillis;
     }
 
     private class RunnerTask extends TimerTask {
@@ -100,10 +101,13 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
                     tradeStart.add(Calendar.DATE, 1);
                 }
                 timeToRun = tradeStart.getTime();
+                if (!TradingDates.isBusinessDay(timeToRun)) {
+                    log.info("{} is not a business day skip", timeToRun);
+                    timeToRun = TradingDates.getNextBusinessDay(timeToRun);
+                }
                 runningTime = timeToRun.getTime();
             }
 
-            System.out.println(">>>>>>>>>>>>> AcceleratedScheduler " + timeToRun);
             log.debug("Running batch task on {}", timeToRun);
             runner.run(timeToRun);
         }

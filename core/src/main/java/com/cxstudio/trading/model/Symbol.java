@@ -12,7 +12,7 @@ public class Symbol {
 
     }
 
-    public Symbol(int symbolId, String ticker, String exchange) {
+    public Symbol(Integer symbolId, String ticker, String exchange) {
         this.symbolId = symbolId;
         this.ticker = ticker;
         this.exchange = exchange;

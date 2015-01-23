@@ -24,7 +24,7 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
     static Logger log = LoggerFactory.getLogger(SequentialHistoricalTradeRetriever.class);
     private final TradeDao tradeDao;
     private final Symbol symbol;
-    private final int bufferSize = 60;
+    private final int bufferSize;
     private LinkedList<Trade> tradeBuffer = new LinkedList<Trade>();
     private DataFilter filter;
     private TradeSpacing tradeSpacing;
@@ -37,6 +37,7 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
         filter = new DataFilter();
         filter.setInterval(tradeSpacing.getSeconds());
         filter.setLimit(bufferSize);
+        this.bufferSize = bufferSize;
     }
 
     public Trade retrieve(Date dateTime) {
@@ -77,6 +78,8 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
                     // again
                     log.debug("The first one in the buffer {} <= given time {}. Iterate from first again", tradeBuffer.get(0), dateTime);
                     iterator = tradeBuffer.listIterator(0);
+                    freshFetch = true;
+                    continue;
                 } else {
                     // if we starts from index=0, we should never reach trade date > given dateTime, re-fetch
                     log.debug("The first one in the buffer {} > given time {}. Clear cache and refetch.", tradeBuffer.get(0), dateTime);
@@ -96,9 +99,15 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
         log.trace("{} trades RE-fetched from the source.", (trades == null ? "null" : trades.size()));
         if (trades != null && trades.size() > 0) {
             log.trace("First one from the RE-fetched data {}", trades.get(0));
-            for (Trade trade : trades) {
-                tradeBuffer.remove();
-                tradeBuffer.add(trade);
+            if (compareDate(trades.get(0), dateTime, tradeSpacing) != 0) {
+                for (Trade trade : trades) {
+                    tradeBuffer.remove();
+                    tradeBuffer.add(trade);
+                }
+                iterator = tradeBuffer.listIterator();
+            } else { // if the first one from the refetch isn't what we expected, re-initialize the cache
+                tradeBuffer.clear();
+                retrieve(dateTime);
             }
         }
         return retrieve(dateTime);

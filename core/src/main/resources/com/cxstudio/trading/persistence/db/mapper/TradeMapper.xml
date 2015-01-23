@@ -6,13 +6,29 @@
 <mapper namespace="com.cxstudio.trading.persistence.db.mapper.TradeMapper">
 
   <resultMap id="TradeMap" type="com.cxstudio.trading.model.Trade">
-  	<id column="trade_id" property="tradeId" jdbcType="BIGINT" />
+  	<id column="trade_id" property="tradeId" jdbcType="BIGINT" />  	
   	<result column="percent_change" property="percentChange" jdbcType="FLOAT" />
   	<result column="datetime" property="dateTime" jdbcType="TIMESTAMP" /> 
+  	<result column="ask" property="ask" jdbcType="FLOAT" />
+  	<result column="bid" property="bid" jdbcType="FLOAT" />
+  	<result column="high" property="high" jdbcType="FLOAT" />
+  	<result column="low" property="low" jdbcType="FLOAT" />
+  	<result column="open" property="open" jdbcType="FLOAT" />
+  	<result column="close" property="close" jdbcType="FLOAT" />
+  	<result column="volume" property="volume" jdbcType="INTEGER" />
+  	<association property="symbol" javaType="com.cxstudio.trading.model.Symbol">
+  		<constructor>
+  			<idArg column="symbol_id" javaType="int"/>
+  			<arg column="ticker" javaType="String" />
+  			<arg column="exchange" javaType="String" />
+  		</constructor>
+  	</association>
   </resultMap>
 
   <select id="selectTrades" resultMap="TradeMap">
-    select * from trade WHERE symbol_id = #{symbol.symbolId}
+    select ${symbol.symbolId} as symbol_id, '${symbol.ticker}' as ticker, '${symbol.exchange}' as exchange, 
+		trade_id, ask, bid, close, high, low, open, volume, percent_change, datetime
+	from trade WHERE symbol_id = #{symbol.symbolId}
     <if test="filter.startTime != null">
     	AND datetime &gt;= #{filter.startTime}
     </if>
@@ -20,12 +36,12 @@
     	AND datetime &lt; #{filter.endTime}
     </if>
     <if test="filter.order != null">
-    	ORDER BY datetime ${filter.order}
+    	ORDER BY datetime #{filter.order}
     </if>
     
     <choose>
 	    <when test="filter.limit > 0">
-	    	Limit #{filter.limit}
+	    	Limit ${filter.limit}
 	    </when>
 	    <otherwise>
 	    	Limit 10000
@@ -34,15 +50,19 @@
   </select>
   
   <select id="selectMiddleBufferedTrades" resultMap="TradeMap">
-  	(SELECT * FROM trade WHERE symbol_id = #{symbol.symbolId}
+  	(SELECT ${symbol.symbolId} as symbol_id, '${symbol.ticker}' as ticker, '${symbol.exchange}' as exchange, 
+		trade_id, ask, bid, close, high, low, open, volume, percent_change, datetime
+		FROM trade WHERE symbol_id = #{symbol.symbolId}
   	  	AND datetime &lt; #{filter.startTime}
     	ORDER BY datetime DESC
-    	Limit #{filter.limit})
+    	Limit ${filter.limit})
     UNION 
-  	(SELECT * FROM trade WHERE symbol_id = #{symbol.symbolId}
+  	(SELECT ${symbol.symbolId} as symbol_id, '${symbol.ticker}' as ticker, '${symbol.exchange}' as exchange, 
+		trade_id, ask, bid, close, high, low, open, volume, percent_change, datetime
+		FROM trade WHERE symbol_id = #{symbol.symbolId}
   	  	AND datetime &gt;= #{filter.startTime}
     	ORDER BY datetime ASC
-    	Limit #{filter.limit})
+    	Limit ${filter.limit})
     ORDER BY datetime ASC  
   </select>
   

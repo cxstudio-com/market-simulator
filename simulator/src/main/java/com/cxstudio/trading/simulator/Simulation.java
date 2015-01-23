@@ -47,7 +47,7 @@ public class Simulation {
         retrieverFactory = new SimulatedTradeRetrieverFactory(tradeDao, TradeSpacing.MINUTE, 480);
         Simulation simulation = (Simulation) ctx.getBean("simulation");
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyy");
-        simulation.setStartTime(dateFormat.parse("03/02/2009"));
+        simulation.setStartTime(dateFormat.parse("03/06/2009"));
         simulation.run();
     }
 

@@ -1,16 +1,20 @@
 package com.cxstudio.trading.model;
 
+import java.util.Date;
+
 public interface Order {
 
-    public Symbol getSymbol();
+    Symbol getSymbol();
 
-    public int getNumOfShares();
+    int getNumOfShares();
 
-    public OrderType getOrderType();
+    OrderType getOrderType();
 
-    public float getHighPrice();
+    float getHighPrice();
 
-    public float getLowPrice();
+    float getLowPrice();
+
+    Date getCreateDate();
 
     public static enum OrderType {
         MARKET, STOP, LIMIT, STOP_LIMIT

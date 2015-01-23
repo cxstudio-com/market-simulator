@@ -18,12 +18,12 @@ import com.cxstudio.trading.model.TradeEvaluation;
 public class SimpleConfidenceSellStrategy implements SellingStrategy {
 
     static Logger log = LoggerFactory.getLogger(SimpleConfidenceSellStrategy.class);
-	@Value("${simulator.confidenceBuyStrategy:0.8}")
+    @Value("${simulator.confidenceBuyStrategy:0.8}")
     private float confidence = 0.8F;
 
-	public SimpleConfidenceSellStrategy() {		
-	}
-	
+    public SimpleConfidenceSellStrategy() {
+    }
+
     public SimpleConfidenceSellStrategy(float confidence) {
         this.confidence = confidence;
     }
@@ -39,7 +39,7 @@ public class SimpleConfidenceSellStrategy implements SellingStrategy {
 
             for (OpenPosition position : positions) {
                 if (position.getSymbol().equals(trade.getSymbol())) {
-                    return new SellOrder(trade.getSymbol(), position.getNumOfShares(), Order.OrderType.MARKET, trade.getClose(), trade.getClose());
+                    return new SellOrder(trade.getSymbol(), position.getNumOfShares(), Order.OrderType.MARKET, trade.getClose(), trade.getClose(), trade.getDateTime());
                 }
             }
         }

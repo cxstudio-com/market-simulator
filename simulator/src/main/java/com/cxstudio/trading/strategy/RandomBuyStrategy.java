@@ -16,13 +16,17 @@ public class RandomBuyStrategy implements BuyingStrategy {
 
     public BuyOrder shouldBuy(TradeEvaluation evaluation, TradingContext context) {
         Portfolio portfolio = context.getPortfolio();
-        Random random = new Random(System.nanoTime());
         Trade trade = context.getCurrentTrade();
-        if (portfolio.getAvailableCash() > 1020 && random.nextBoolean()) {
-            return new BuyOrder(trade.getSymbol(), (int) (10000 / trade.getClose()), Order.OrderType.MARKET, trade.getClose(), trade.getClose());
+        if (portfolio.getAvailableCash() > 1020 && randomPick()) {
+            return new BuyOrder(trade.getSymbol(), (int) (10000 / trade.getClose()), Order.OrderType.MARKET, trade.getClose(), trade.getClose(), trade.getDateTime());
         } else {
             return null;
         }
+    }
+
+    private boolean randomPick() {
+        Random random = new Random(System.nanoTime());
+        return (random.nextInt() % 10 == 0);
     }
 
 }

@@ -19,8 +19,9 @@
     </appender>
 
     <!--  Suppress org.apache -->
-    <logger name="com.cxstudio.trading" level="debug" />
-	<logger name="com.cxstudio.trading.SequentialHistoricalTradeRetriever" level="trace" />
+    <logger name="com.cxstudio.trading" level="info" />
+	<logger name="com.cxstudio.trading.SequentialHistoricalTradeRetriever" level="debug" />
+	<logger name="com.cxstudio.trading.SingleTradeRunner" level="warn" />
 	
     <root level="INFO">
 	   <appender-ref ref="STDOUT" />

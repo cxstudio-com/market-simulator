@@ -12,11 +12,11 @@ import com.cxstudio.trading.model.TradeEvaluation;
 @Component
 public class SimpleConfidenceBuyStrategy implements BuyingStrategy {
     @Value("${simulator.confidenceBuyStrategy:0.8}")
-	private float confidence = 0.8F;
+    private float confidence = 0.8F;
 
     public SimpleConfidenceBuyStrategy() {
     }
-    
+
     public SimpleConfidenceBuyStrategy(float confidence) {
         this.confidence = confidence;
     }
@@ -28,7 +28,7 @@ public class SimpleConfidenceBuyStrategy implements BuyingStrategy {
     public BuyOrder shouldBuy(TradeEvaluation evaluation, TradingContext context) {
         if (evaluation.getBuyScore() > confidence) {
             Trade trade = context.getCurrentTrade();
-            BuyOrder order = new BuyOrder(trade.getSymbol(), (int) (10000 / trade.getClose()), Order.OrderType.MARKET, trade.getClose(), trade.getClose());
+            BuyOrder order = new BuyOrder(trade.getSymbol(), (int) (10000 / trade.getClose()), Order.OrderType.MARKET, trade.getClose(), trade.getClose(), trade.getDateTime());
             return order;
         } else {
             return null;

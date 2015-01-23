@@ -18,15 +18,19 @@ public class RandomSellStrategy implements SellingStrategy {
     static Logger log = LoggerFactory.getLogger(RandomSellStrategy.class);
 
     public SellOrder shouldSell(TradeEvaluation evaluation, TradingContext context) {
-        Random random = new Random(System.nanoTime());
         Portfolio portfolio = context.getPortfolio();
         Trade trade = context.getCurrentTrade();
         int sharesHeld = portfolio.getSharesPerSymbol(trade.getSymbol());
-        if (sharesHeld > 0 && random.nextBoolean()) {
-            return new SellOrder(trade.getSymbol(), sharesHeld, Order.OrderType.MARKET, trade.getClose(), trade.getClose());
+        if (sharesHeld > 0 && randomPick()) {
+            return new SellOrder(trade.getSymbol(), sharesHeld, Order.OrderType.MARKET, trade.getClose(), trade.getClose(), trade.getDateTime());
         } else {
             return null;
         }
+    }
+
+    private boolean randomPick() {
+        Random random = new Random(System.nanoTime());
+        return (random.nextInt() % 10 == 0);
     }
 
 }

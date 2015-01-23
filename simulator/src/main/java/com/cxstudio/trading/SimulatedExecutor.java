@@ -41,18 +41,20 @@ public class SimulatedExecutor implements OrderExecutor {
             }
         } else if (order instanceof SellOrder) {
             SellOrder sellOrder = (SellOrder) order;
+            float totalCost = portfolio.totalCostPerSymbol(sellOrder.getSymbol());
 
             log.debug("Adding sell order {}", sellOrder);
             ClosedPosition newPos = new ClosedPosition();
             newPos.setSymbol(order.getSymbol());
-            newPos.setCloseDate(new Date());
-            newPos.setEntryPrice(sellOrder.getLowPrice());
+            newPos.setCloseDate(sellOrder.getCreateDate());
+            newPos.setTotalCost(totalCost);
             newPos.setNumOfShares(sellOrder.getNumOfShares());
             newPos.setFee(transactionFee);
             newPos.setClosePrice(sellOrder.getLowPrice());
             portfolio.closePosition(newPos);
 
-            log.debug("New closed position created {}", newPos);
+            log.info("Position {} Closed, profit {}% on {} [{}]", newPos.getSymbol().getTicker(),
+                    ((newPos.getTotalCost() - newPos.getClosePrice() * newPos.getNumOfShares()) / newPos.getTotalCost() * 100F), newPos.getCloseDate(), portfolio);
             position = newPos;
         }
 

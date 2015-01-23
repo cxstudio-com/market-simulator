@@ -22,19 +22,23 @@ public class TradeDbDao implements TradeDao {
     public TradeDbDao() {
     }
 
+    @Override
     public List<Trade> getTrades(Symbol symbol, DataFilter filter) {
         return mapper.selectTrades(symbol, filter);
     }
-    
+
+    @Override
     public List<Trade> getMiddleBufferedTrades(Symbol symbol, DataFilter filter) {
         return mapper.selectMiddleBufferedTrades(symbol, filter);
     }
 
+    @Override
     public void insertTrades(List<Trade> trades) {
         if (trades != null && trades.size() > 0)
             mapper.insertTrades(trades);
     }
 
+    @Override
     public void insertTempTrades(List<Trade> trades) {
         if (trades != null && trades.size() > 0)
             mapper.insertTempTrades(trades);

@@ -1,5 +1,6 @@
 package com.cxstudio.trading.model;
 
+import java.util.Date;
 
 public class SellOrder implements Order {
     private Symbol symbol;
@@ -7,45 +8,54 @@ public class SellOrder implements Order {
     private OrderType orderType;
     private float highPrice;
     private float lowPrice;
+    private Date createDate;
 
     public SellOrder(Symbol symbol, int numOfShares, OrderType orderType) {
-        this.symbol = symbol;
-        this.numOfShares = numOfShares;
-        this.orderType = orderType;
+        this(symbol, numOfShares, orderType, 0f, 0f, new Date());
     }
 
-    public SellOrder(Symbol symbol, int numOfShares, OrderType orderType, float highPrice, float lowPrice) {
+    public SellOrder(Symbol symbol, int numOfShares, OrderType orderType, float highPrice, float lowPrice, Date createDate) {
         this.symbol = symbol;
         this.numOfShares = numOfShares;
         this.orderType = orderType;
         this.highPrice = highPrice;
         this.lowPrice = lowPrice;
+        this.createDate = createDate;
     }
 
+    @Override
     public Symbol getSymbol() {
         return symbol;
     }
 
+    @Override
     public int getNumOfShares() {
         return numOfShares;
     }
 
+    @Override
     public OrderType getOrderType() {
         return orderType;
     }
 
-	public float getHighPrice() {
+    @Override
+    public float getHighPrice() {
         return highPrice;
     }
 
+    @Override
     public float getLowPrice() {
         return lowPrice;
     }
 
     @Override
-	public String toString() {
-		return "SellOrder [symbol=" + symbol + ", numOfShares=" + numOfShares
-				+ ", orderType=" + orderType + ", highPrice=" + highPrice
-				+ ", lowPrice=" + lowPrice + "]";
-	}
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    @Override
+    public String toString() {
+        return "SellOrder [symbol=" + symbol + ", numOfShares=" + numOfShares + ", orderType=" + orderType + ", highPrice=" + highPrice + ", lowPrice=" + lowPrice + ", createDate=" + createDate + "]";
+    }
+
 }
