@@ -116,9 +116,13 @@ public class Portfolio {
         this.availableCash = availableCash;
     }
 
+    public Set<Symbol> getHoldingSymbols() {
+        return mappedOpenPositions.keySet();
+    }
+
     @Override
     public String toString() {
-        return "Portfolio [openPositions=" + openPositions.size() + ", closedPositions=" + closedPositions.size() + ", availableCash=" + availableCash + "]";
+        return "[open=" + openPositions.size() + ", closed=" + closedPositions.size() + ", Cash=" + availableCash + "]";
     }
 
 }

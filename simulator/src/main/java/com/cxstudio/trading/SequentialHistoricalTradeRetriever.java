@@ -30,7 +30,8 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
     private TradeSpacing tradeSpacing;
     private ListIterator<Trade> iterator;
 
-    public SequentialHistoricalTradeRetriever(TradeDao tradeDao, Symbol symbol, TradeSpacing tradeSpacing, int bufferSize) {
+    public SequentialHistoricalTradeRetriever(TradeDao tradeDao, Symbol symbol, TradeSpacing tradeSpacing,
+            int bufferSize) {
         this.tradeDao = tradeDao;
         this.symbol = symbol;
         this.tradeSpacing = tradeSpacing;
@@ -76,18 +77,21 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
                 if (compareDate(tradeBuffer.get(0), dateTime, tradeSpacing) <= 0) {
                     // if the first one in buffer is earlier than the given date start from begining and iterate it
                     // again
-                    log.debug("The first one in the buffer {} <= given time {}. Iterate from first again", tradeBuffer.get(0), dateTime);
+                    log.debug("The first one in the buffer {} <= given time {}. Iterate from first again",
+                            tradeBuffer.get(0), dateTime);
                     iterator = tradeBuffer.listIterator(0);
                     freshFetch = true;
                     continue;
                 } else {
                     // if we starts from index=0, we should never reach trade date > given dateTime, re-fetch
-                    log.debug("The first one in the buffer {} > given time {}. Clear cache and refetch.", tradeBuffer.get(0), dateTime);
+                    log.debug("The first one in the buffer {} > given time {}. Clear cache and refetch.",
+                            tradeBuffer.get(0), dateTime);
                     tradeBuffer.clear();
                 }
                 return retrieve(dateTime);
             } else { // else compare < 0, trade date < given dateTime, then proceed to next trade
-                log.trace("move to next trade in buffer. tradeBuffer.get(currentIndex) {} < dateTime {}.", trade, dateTime);
+                log.trace("move to next trade in buffer. tradeBuffer.get(currentIndex) {} < dateTime {}.", trade,
+                        dateTime);
             }
         }
 
@@ -96,7 +100,7 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
         filter.setStartTime(dateTime);
         filter.setLimit(bufferSize / 2);
         List<Trade> trades = tradeDao.getTrades(symbol, filter);
-        log.trace("{} trades RE-fetched from the source.", (trades == null ? "null" : trades.size()));
+        log.info("{} trades RE-fetched from the source.", (trades == null ? "null" : trades.size()));
         if (trades != null && trades.size() > 0) {
             log.trace("First one from the RE-fetched data {}", trades.get(0));
             if (compareDate(trades.get(0), dateTime, tradeSpacing) != 0) {
@@ -107,15 +111,17 @@ public class SequentialHistoricalTradeRetriever implements TradeRetriever {
                 iterator = tradeBuffer.listIterator();
             } else { // if the first one from the refetch isn't what we expected, re-initialize the cache
                 tradeBuffer.clear();
-                retrieve(dateTime);
             }
+            return retrieve(dateTime);
+        } else {
+            return null;
         }
-        return retrieve(dateTime);
     }
 
     public List<Trade> lastNumOfTrades(Date startTime, int numOfTrades) {
         if (numOfTrades > bufferSize / 2) {
-            throw new IllegalArgumentException("Requested last " + numOfTrades + " exceeds half of the cached size " + bufferSize / 2);
+            throw new IllegalArgumentException("Requested last " + numOfTrades + " exceeds half of the cached size "
+                    + bufferSize / 2);
         }
         if (iterator.hasPrevious()) {
             iterator.previous(); // rewind one step before calling retrieve

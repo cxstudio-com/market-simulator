@@ -17,8 +17,8 @@ import com.cxstudio.trading.TradeEvaluator;
 import com.cxstudio.trading.evaluator.MovingAverageEvaluator;
 import com.cxstudio.trading.evaluator.SupportResistenceEvaluator;
 import com.cxstudio.trading.model.Portfolio;
-import com.cxstudio.trading.strategy.RandomBuyStrategy;
-import com.cxstudio.trading.strategy.RandomSellStrategy;
+import com.cxstudio.trading.strategy.SimpleConfidenceBuyStrategy;
+import com.cxstudio.trading.strategy.SimplePercentProfitSellStrategy;
 
 @Configuration
 @ComponentScan(basePackages = {"com.cxstudio.trading"})
@@ -37,11 +37,12 @@ public class SimulationConfigure {
     }
 
     @Bean
-    public Simulation simulation(MovingAverageEvaluator movingAverageEval, SupportResistenceEvaluator supResistEval, PortfolioManager portfolioManager, RandomBuyStrategy buyingStrategy,
-            RandomSellStrategy sellingStrategy) {
+    public Simulation simulation(MovingAverageEvaluator movingAverageEval, SupportResistenceEvaluator supResistEval,
+            PortfolioManager portfolioManager, SimpleConfidenceBuyStrategy buyingStrategy,
+            SimplePercentProfitSellStrategy sellingStrategy) {
         Set<TradeEvaluator> evaluators = new HashSet<TradeEvaluator>(2);
         evaluators.add(movingAverageEval);
-        evaluators.add(supResistEval);
+        // evaluators.add(supResistEval);
         log.debug("portfolioManager.getProtfolio {}", portfolioManager.getPortfolio());
         return new Simulation(evaluators, portfolioManager, buyingStrategy, sellingStrategy);
     }

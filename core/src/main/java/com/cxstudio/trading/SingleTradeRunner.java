@@ -1,6 +1,9 @@
 package com.cxstudio.trading;
 
+import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -22,9 +25,11 @@ public class SingleTradeRunner implements TradeRunner {
     private final TradeRetriever tradeRetreiver;
     private final BuyingStrategy buyingStrategy;
     private final SellingStrategy sellingStrategy;
+    private static int monthOfYear = -1;
 
-    public SingleTradeRunner(Symbol symbol, Set<TradeEvaluator> tradeEvaluators, TradeRetrieverFactory tradeRetrieverFactory, PortfolioManager profileManager, BuyingStrategy buyingStrategy,
-            SellingStrategy sellingStrategy) {
+    public SingleTradeRunner(Symbol symbol, Set<TradeEvaluator> tradeEvaluators,
+            TradeRetrieverFactory tradeRetrieverFactory, PortfolioManager profileManager,
+            BuyingStrategy buyingStrategy, SellingStrategy sellingStrategy) {
         this.symbol = symbol;
         this.evaluators = tradeEvaluators;
         this.tradeRetreiver = tradeRetrieverFactory.getTradeRetriever(symbol);
@@ -42,6 +47,7 @@ public class SingleTradeRunner implements TradeRunner {
         context.setPortfolio(portfolioManager.getPortfolio());
         context.setCurrentTrade(trade);
         context.setLast30Trades(tradeRetreiver.lastNumOfTrades(time, 30));
+        portfolioManager.updateLatestQuote(trade);
 
         // calculate aggregated buy/sell score from evaluators
         float buyScoreSum = 0, sellScoreSum = 0;
@@ -59,7 +65,7 @@ public class SingleTradeRunner implements TradeRunner {
             try {
                 portfolioManager.executeOrder(buyOrder);
             } catch (Exception e) {
-                log.error("Unable to execute a buy order.", e);
+                log.error("Unable to execute a buy order: " + e.getMessage());
             }
         } else {
             log.debug("No buy order created on evaluation {}", finalEvaluation);
@@ -75,7 +81,19 @@ public class SingleTradeRunner implements TradeRunner {
         } else {
             log.debug("No sell order created on evaluation {}", finalEvaluation);
         }
-        log.info("Single run completed. Portfolio: {}", portfolioManager.getPortfolio());
+
+        Calendar currentCal = Calendar.getInstance();
+        currentCal.setTime(time);
+        NumberFormat numFormat = NumberFormat.getCurrencyInstance();
+
+        if (currentCal.get(Calendar.MONTH) != monthOfYear) {
+            log.info("Running single task for the month of {}, {} {} total portolio worth >>>{}<<<",
+                    currentCal.getDisplayName(Calendar.MONTH, Calendar.SHORT_FORMAT, Locale.getDefault()),
+                    currentCal.get(Calendar.YEAR), portfolioManager.getPortfolio(),
+                    numFormat.format(portfolioManager.getCurrentPortfolioWorth()));
+            monthOfYear = currentCal.get(Calendar.MONTH);
+        }
+        log.debug("Single run completed. Portfolio: {}", portfolioManager.getPortfolio());
 
     }
 }

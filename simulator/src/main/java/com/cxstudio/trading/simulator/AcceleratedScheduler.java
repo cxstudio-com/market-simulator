@@ -31,7 +31,8 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
      *            Ex: period = 1 minute, accelerateRate = 60, then scheduler will run every 1 second and run task
      *            on every minute data
      */
-    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSecond, float accelerationRate, TradeDao tradeDao) {
+    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSecond,
+            float accelerationRate, TradeDao tradeDao) {
         this.startTime = startTime;
         this.periodInSecond = periodInSecond;
         this.actualPeriodInMillis = (long) (periodInSecond * 1000 * accelerationRate);
@@ -39,7 +40,8 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
         this.tradeDao = tradeDao;
     }
 
-    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSecond, long actualPeriodInMillis, TradeDao tradeDao) {
+    public AcceleratedScheduler(BatchTradeRunner tradeRunner, Date startTime, long periodInSecond,
+            long actualPeriodInMillis, TradeDao tradeDao) {
         this.startTime = startTime;
         this.periodInSecond = periodInSecond;
         this.actualPeriodInMillis = actualPeriodInMillis;
@@ -76,10 +78,6 @@ public class AcceleratedScheduler implements Scheduler<BatchTradeRunner> {
             this.runningTime = startTime.getTime();
         }
 
-        /**
-         * TODO:
-         * Running time needs to be validated against valid trading day/hour, and skip off hours weekend and holidays
-         */
         @Override
         public void run() {
             runningTime += periodInSeconds * 1000;

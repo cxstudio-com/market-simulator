@@ -7,7 +7,6 @@ import com.cxstudio.trading.model.Trade;
 
 public class TradingContext {
 
-    private float availableFund;
     private Trade currentTrade;
     private List<Trade> last30Trades;
     private Portfolio portfolio;
@@ -17,11 +16,11 @@ public class TradingContext {
     }
 
     public float getAvailableFund() {
-        return availableFund;
+        return portfolio.getAvailableCash();
     }
 
     public void setAvailableFund(float availableFund) {
-        this.availableFund = availableFund;
+        this.portfolio.setAvailableCash(availableFund);
     }
 
     public void setCurrentTrade(Trade cunrrentTrade) {

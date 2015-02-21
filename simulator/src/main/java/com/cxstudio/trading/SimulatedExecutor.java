@@ -1,7 +1,5 @@
 package com.cxstudio.trading;
 
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,7 +16,7 @@ import com.cxstudio.trading.model.SellOrder;
 public class SimulatedExecutor implements OrderExecutor {
 
     static Logger log = LoggerFactory.getLogger(SimulatedExecutor.class);
-    private float transactionFee = 15.0f;
+    private float transactionFee = 0.0f;
 
     public Position execute(Order order, Portfolio portfolio) {
         Position position = null;
@@ -29,15 +27,16 @@ public class SimulatedExecutor implements OrderExecutor {
             if (portfolio.getAvailableCash() > (cost + transactionFee)) {
                 OpenPosition newPos = new OpenPosition();
                 newPos.setSymbol(order.getSymbol());
-                newPos.setEntryDate(new Date());
+                newPos.setEntryDate(buyOrder.getCreateDate());
                 newPos.setEntryPrice(buyOrder.getHighPrice());
                 newPos.setNumOfShares(buyOrder.getNumOfShares());
                 newPos.setFee(transactionFee);
                 portfolio.addOpenPosition(newPos);
-                log.debug("New open position created {}", newPos);
+                log.debug("New open position created {} portfolio {}", newPos, portfolio);
                 position = newPos;
             } else {
-                throw new RuntimeException("Not enough available cash to execute order.");
+                throw new RuntimeException("Not enough available cash to execute order. Remaining cash: "
+                        + portfolio.getAvailableCash());
             }
         } else if (order instanceof SellOrder) {
             SellOrder sellOrder = (SellOrder) order;
@@ -53,8 +52,12 @@ public class SimulatedExecutor implements OrderExecutor {
             newPos.setClosePrice(sellOrder.getLowPrice());
             portfolio.closePosition(newPos);
 
-            log.info("Position {} Closed, profit {}% on {} [{}]", newPos.getSymbol().getTicker(),
-                    ((newPos.getTotalCost() - newPos.getClosePrice() * newPos.getNumOfShares()) / newPos.getTotalCost() * 100F), newPos.getCloseDate(), portfolio);
+            log.info(
+                    "Position {} Closed, profit {}% = ${} on {} [{}]",
+                    newPos.getSymbol().getTicker(),
+                    ((newPos.getClosePrice() * newPos.getNumOfShares() - newPos.getTotalCost()) / newPos.getTotalCost() * 100F),
+                    newPos.getClosePrice() * newPos.getNumOfShares() - newPos.getTotalCost(), newPos.getCloseDate(),
+                    portfolio);
             position = newPos;
         }
 

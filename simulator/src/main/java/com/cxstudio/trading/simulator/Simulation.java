@@ -32,6 +32,7 @@ public class Simulation {
     private final BuyingStrategy buyingStrategy;
     private final SellingStrategy sellingStrategy;
     private Date startTime;
+    private Date stopTime;
     private static SimulatedTradeRetrieverFactory retrieverFactory;
     static Logger log = LoggerFactory.getLogger(Simulation.class);
 
@@ -44,14 +45,16 @@ public class Simulation {
     public static void main(String[] args) throws ParseException {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SimulationConfigure.class);
         TradeDao tradeDao = (TradeDao) ctx.getBean("tradeDbDao");
-        retrieverFactory = new SimulatedTradeRetrieverFactory(tradeDao, TradeSpacing.MINUTE, 480);
+        retrieverFactory = new SimulatedTradeRetrieverFactory(tradeDao, TradeSpacing.MINUTE, 48000);
         Simulation simulation = (Simulation) ctx.getBean("simulation");
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyy");
-        simulation.setStartTime(dateFormat.parse("03/06/2009"));
+        simulation.setStartTime(dateFormat.parse("1/1/2005"));
+        simulation.setStopTime(dateFormat.parse("12/1/2008"));
         simulation.run();
     }
 
-    public Simulation(Set<TradeEvaluator> evaluators, PortfolioManager portfolioManager, BuyingStrategy buyingStrategy, SellingStrategy sellingStrategy) {
+    public Simulation(Set<TradeEvaluator> evaluators, PortfolioManager portfolioManager, BuyingStrategy buyingStrategy,
+            SellingStrategy sellingStrategy) {
         this.evaluators = evaluators;
         this.portfolioManager = portfolioManager;
         this.buyingStrategy = buyingStrategy;
@@ -61,15 +64,16 @@ public class Simulation {
     private void run() {
         // symbols = symbolDao.getAllSymbols(true);
         symbols = new ArrayList<Symbol>();
-        symbols.add(symbolDao.getSymbol("AAPL"));
+        symbols.add(symbolDao.getSymbol("YHOO"));
 
         List<SingleTradeRunner> runners = new ArrayList<SingleTradeRunner>();
         for (Symbol symbol : symbols) {
-            SingleTradeRunner runner = new SingleTradeRunner(symbol, evaluators, retrieverFactory, portfolioManager, buyingStrategy, sellingStrategy);
+            SingleTradeRunner runner = new SingleTradeRunner(symbol, evaluators, retrieverFactory, portfolioManager,
+                    buyingStrategy, sellingStrategy);
             runners.add(runner);
         }
         BatchTradeRunner batchRunner = new BatchTradeRunner(runners);
-        AcceleratedScheduler scheduler = new AcceleratedScheduler(batchRunner, startTime, 60, 1, tradeDao);
+        SequentialScheduler scheduler = new SequentialScheduler(batchRunner, startTime, stopTime, 60, tradeDao);
         scheduler.start();
     }
 
@@ -79,6 +83,14 @@ public class Simulation {
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+    }
+
+    public Date getStopTime() {
+        return stopTime;
+    }
+
+    public void setStopTime(Date stopTime) {
+        this.stopTime = stopTime;
     }
 
 }

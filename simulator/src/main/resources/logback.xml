@@ -20,8 +20,11 @@
 
     <!--  Suppress org.apache -->
     <logger name="com.cxstudio.trading" level="info" />
-	<logger name="com.cxstudio.trading.SequentialHistoricalTradeRetriever" level="debug" />
-	<logger name="com.cxstudio.trading.SingleTradeRunner" level="warn" />
+    <logger name="com.cxstudio.trading.SingleTradeRunner" level="info" />
+    <!-- logger name="com.cxstudio.trading.simulator.SequentialScheduler" level="info" />
+	<logger name="com.cxstudio.trading.SequentialHistoricalTradeRetriever" level="info" />
+	
+	<logger name="com.cxstudio.trading.evaluator.MovingAverageEvaluator" level="debug" / -->
 	
     <root level="INFO">
 	   <appender-ref ref="STDOUT" />

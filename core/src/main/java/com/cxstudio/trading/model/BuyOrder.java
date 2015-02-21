@@ -14,7 +14,8 @@ public class BuyOrder implements Order {
         this(symbol, numOfShares, orderType, 0f, 0f, new Date());
     }
 
-    public BuyOrder(Symbol symbol, int numOfShares, OrderType orderType, float highPrice, float lowPrice, Date createDate) {
+    public BuyOrder(Symbol symbol, int numOfShares, OrderType orderType, float highPrice, float lowPrice,
+            Date createDate) {
         this.symbol = symbol;
         this.numOfShares = numOfShares;
         this.orderType = orderType;
@@ -55,7 +56,8 @@ public class BuyOrder implements Order {
 
     @Override
     public String toString() {
-        return "BuyOrder [symbol=" + symbol + ", numOfShares=" + numOfShares + ", orderType=" + orderType + ", highPrice=" + highPrice + ", lowPrice=" + lowPrice + ", createDate=" + createDate + "]";
+        return "[" + symbol.getTicker() + ": " + numOfShares + " shares, orderType=" + orderType + ", highPrice="
+                + highPrice + ", lowPrice=" + lowPrice + ", createDate=" + createDate + "]";
     }
 
 }
